@@ -13,6 +13,7 @@ def home():
         session["game_over"] = False
 
     message = ""
+    message_type = ""
 
     if request.method == "POST" and not session["game_over"]:
         guess = int(request.form["guess"])
@@ -27,10 +28,12 @@ def home():
 
         elif guess == session["secret"]:
             message = f"You got it! 🎉🔥 in {session['tries']} tries"
+            message_type = "win"
             session["game_over"] = True
 
         elif session["tries"] >= 5:
             message = f"You lost! 😓 The number was {session['secret']}"
+            message_type = "lose"
             session["game_over"] = True
 
         elif guess > session["secret"]:
@@ -44,7 +47,8 @@ def home():
     return render_template(
         "index.html",
         message=message,
-        tries=session["tries"]
+        tries=session["tries"],
+        message_type=message_type
     )
 
 @app.route("/reset")

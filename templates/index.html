@@ -15,6 +15,14 @@
 
         <h1>🎯 Guess The Number</h1>
 
+        <div class="game-status">
+            {% if session.get("game_over") %}
+                🏆 Game Over
+            {% else %}
+                🎮 Game in progress
+            {% endif %}
+        </div>
+
         <p>Guess a number between 1 and 10</p>
 
         <form method="POST">
@@ -32,9 +40,13 @@
 
         </form>
 
-        <div class="message">
+        <div class="message {{ message_type }}">
             {{ message }}
         </div>
+
+        <p class="tries">
+            Tries: {{ tries }}/5
+        </p>
 
         {% if session.get("game_over") %}
             <a href="{{ url_for('reset') }}" class="play-again">
