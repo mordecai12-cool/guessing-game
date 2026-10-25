@@ -36,6 +36,12 @@
             {{ message }}
         </div>
 
+        {% if session.get("game_over") %}
+            <a href="{{ url_for('reset') }}" class="play-again">
+                Play Again 🔄
+            </a>
+        {% endif %}    
+
     </div>
 
 </body>

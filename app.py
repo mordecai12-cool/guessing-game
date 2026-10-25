@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, session
+from flask import Flask, render_template, request, session, redirect
 import random
 
 app = Flask(__name__)
@@ -26,7 +26,7 @@ def home():
             message = "Out of range! 😞"
 
         elif guess == session["secret"]:
-            message = f"You got it! 🥳👍 in {session['tries']} tries"
+            message = f"You got it! 🎉🔥 in {session['tries']} tries"
             session["game_over"] = True
 
         elif session["tries"] >= 5:
@@ -46,6 +46,11 @@ def home():
         message=message,
         tries=session["tries"]
     )
+
+@app.route("/reset")
+def reset():
+    session.clear()
+    return redirect("/")
 
 if __name__ == "__main__":
     app.run(debug=True)
