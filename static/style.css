@@ -148,6 +148,10 @@ button:hover {
     color: #dc2626;
 }
 
+.message.high,
+.message.low {
+    color: #d97706;
+}
 .game-status {
     margin-bottom: 15px;
 

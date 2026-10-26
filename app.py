@@ -16,7 +16,17 @@ def home():
     message_type = ""
 
     if request.method == "POST" and not session["game_over"]:
-        guess = int(request.form["guess"])
+        try:
+            guess = int(request.form["guess"])
+        except ValueError:
+            message = "Please enter a valid number."
+            message_type = "high"
+            return render_template(
+                "index.html",
+                message=message,
+                tries=session["tries"],
+                message_type=message_type
+            )
         session["tries"] += 1
 
         print("Player guessed:", guess)
@@ -38,9 +48,11 @@ def home():
 
         elif guess > session["secret"]:
             message = "Too high! 🤔"
+            message_type = "high"
 
         elif guess < session["secret"]:
             message = "Too low! 🤔"
+            message_type = "low"
 
         print("Result:", message)
 
