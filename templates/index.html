@@ -23,15 +23,34 @@
             {% endif %}
         </div>
 
-        <p>Guess a number between 1 and 10</p>
-
+        
         <form method="POST">
 
+            <label for="difficulty">Choose difficulty:</label>
+    
+            <select name="difficulty" id="difficulty">
+                <option value="easy" {% if session.get("difficulty") == "easy" %}selected{% endif %}>
+                    Easy
+                </option>
+
+                <option value="medium" {% if session.get("difficulty") == "medium" %}selected{% endif %}>
+                    Medium
+                </option>
+
+                <option value="hard" {% if session.get("difficulty") == "hard" %}selected{% endif %}>
+                    Hard
+                </option>
+            </select>
+    
+            <p>
+                Guess a number between 1 and {{ max_number }}
+            </p>
+            
             <input
                 type="number"
                 name="guess"
                 min="1"
-                max="10"
+                max="{{ max_number }}"
                 placeholder="Enter your guess"
                 required
             >
@@ -45,7 +64,7 @@
         </div>
 
         <p class="tries">
-            Tries: {{ tries }}/5
+            Tries: {{ tries }}/{{ session.get("max_tries") }}
         </p>
 
         {% if session.get("game_over") %}

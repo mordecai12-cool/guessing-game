@@ -7,15 +7,38 @@ app.secret_key = "guessing-game-secret"
 
 @app.route("/", methods=["GET", "POST"])
 def home():
-    if "secret" not in session or "game_over" not in session:
-        session["secret"] = random.randint(1, 10)
+    if "secret" not in session:
+        session["difficulty"] = "easy"
+        session["max_number"] = 10
+        session["max_tries"] = 5
+
+        session["secret"] = random.randint(1, session["max_number"])
         session["tries"] = 0
         session["game_over"] = False
 
     message = ""
     message_type = ""
+    difficulty_settings = {
+        "easy": {"max_number": 10, "max_tries": 5},
+        "medium": {"max_number": 50, "max_tries": 7},
+        "hard": {"max_number": 100, "max_tries": 10}
+    }
 
     if request.method == "POST" and not session["game_over"]:
+        difficulty = request.form.get("difficulty", "easy")
+
+        settings = difficulty_settings[difficulty]
+
+        session["difficulty"] = difficulty
+        session["max_number"] = settings["max_number"]
+        session["max_tries"] = settings["max_tries"]
+
+        max_number = session["max_number"]
+        max_tries = session["max_tries"]
+
+        if session["tries"] == 0:
+            session["secret"] = random.randint(1, max_number)
+
         try:
             guess = int(request.form["guess"])
         except ValueError:
@@ -33,7 +56,7 @@ def home():
         print("Secret number:", session["secret"])
         print("Tries:", session["tries"])
 
-        if guess < 1 or guess > 10:
+        if guess < 1 or guess > max_number:
             message = "Out of range! 😞"
 
         elif guess == session["secret"]:
@@ -41,7 +64,7 @@ def home():
             message_type = "win"
             session["game_over"] = True
 
-        elif session["tries"] >= 5:
+        elif session["tries"] >= max_tries:
             message = f"You lost! 😓 The number was {session['secret']}"
             message_type = "lose"
             session["game_over"] = True
@@ -60,7 +83,8 @@ def home():
         "index.html",
         message=message,
         tries=session["tries"],
-        message_type=message_type
+        message_type=message_type,
+        max_number=session["max_number"]
     )
 
 @app.route("/reset")
