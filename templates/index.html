@@ -36,15 +36,15 @@
 
                 <select name="difficulty" id="difficulty">
 
-                    <option value="easy">
+                    <option value="easy" {% if session.get("difficulty") == "easy" %}selected{% endif %}>
                         Easy
                     </option>
 
-                    <option value="medium">
+                    <option value="medium" {% if session.get("difficulty") == "medium" %}selected{% endif %}>
                         Medium
                     </option>
 
-                    <option value="hard">
+                    <option value="hard" {% if session.get("difficulty") == "hard" %}selected{% endif %}>
                         Hard
                     </option>
 

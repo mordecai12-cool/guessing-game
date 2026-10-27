@@ -103,12 +103,17 @@ def guess():
         max_number=max_number
     )
 
-
 @app.route("/reset")
 def reset():
-    session.clear()
-    return redirect("/")
+    difficulty = session.get("difficulty", "easy")
 
+    settings = difficulty_settings[difficulty]
+
+    session["secret"] = random.randint(1, settings["max_number"])
+    session["tries"] = 0
+    session["game_over"] = False
+
+    return redirect("/")
 
 if __name__ == "__main__":
     app.run(debug=True)
