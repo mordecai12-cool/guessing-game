@@ -18,60 +18,92 @@
         <div class="game-status">
             {% if session.get("game_over") %}
                 🏆 Game Over
-            {% else %}
+            {% elif session.get("secret") %}
                 🎮 Game in progress
+            {% else %}
+                🎮 Choose your difficulty
             {% endif %}
         </div>
 
-        
-        <form method="POST">
 
-            <label for="difficulty">Choose difficulty:</label>
-    
-            <select name="difficulty" id="difficulty">
-                <option value="easy" {% if session.get("difficulty") == "easy" %}selected{% endif %}>
-                    Easy
-                </option>
+        <!-- Start Game -->
 
-                <option value="medium" {% if session.get("difficulty") == "medium" %}selected{% endif %}>
-                    Medium
-                </option>
+        {% if not session.get("secret") or session.get("game_over") %}
 
-                <option value="hard" {% if session.get("difficulty") == "hard" %}selected{% endif %}>
-                    Hard
-                </option>
-            </select>
-    
+            <form method="POST" action="{{ url_for('start_game') }}">
+
+                <label for="difficulty">Choose difficulty:</label>
+
+                <select name="difficulty" id="difficulty">
+
+                    <option value="easy">
+                        Easy
+                    </option>
+
+                    <option value="medium">
+                        Medium
+                    </option>
+
+                    <option value="hard">
+                        Hard
+                    </option>
+
+                </select>
+
+                <button type="submit">Start Game 🎮</button>
+
+            </form>
+
+        {% endif %}
+
+
+        <!-- Guess -->
+
+        {% if session.get("secret") and not session.get("game_over") %}
+
             <p>
                 Guess a number between 1 and {{ max_number }}
             </p>
-            
-            <input
-                type="number"
-                name="guess"
-                min="1"
-                max="{{ max_number }}"
-                placeholder="Enter your guess"
-                required
-            >
 
-            <button type="submit">Guess</button>
+            <form method="POST" action="{{ url_for('guess') }}">
 
-        </form>
+                <input
+                    type="number"
+                    name="guess"
+                    min="1"
+                    max="{{ max_number }}"
+                    placeholder="Enter your guess"
+                    required
+                >
+
+                <button type="submit">Guess</button>
+
+            </form>
+
+        {% endif %}
+
 
         <div class="message {{ message_type }}">
             {{ message }}
         </div>
 
-        <p class="tries">
-            Tries: {{ tries }}/{{ session.get("max_tries") }}
-        </p>
+
+        {% if session.get("secret") %}
+
+            <p class="tries">
+                Tries: {{ tries }}/{{ session.get("max_tries") }}
+            </p>
+
+        {% endif %}
+
 
         {% if session.get("game_over") %}
+
             <a href="{{ url_for('reset') }}" class="play-again">
                 Play Again 🔄
             </a>
-        {% endif %}    
+
+        {% endif %}
 
     </div>
 
