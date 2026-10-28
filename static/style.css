@@ -183,3 +183,20 @@ button:hover {
     margin: 5px 0;
     font-weight: bold;
 }
+
+.statistics {
+    margin-top: 20px;
+    padding: 15px;
+    border-radius: 10px;
+    background: #e0f2fe;
+}
+
+.statistics h3 {
+    margin-bottom: 10px;
+    color: #1e3a8a;
+}
+
+.statistics p {
+    margin: 5px 0;
+    font-weight: bold;
+}

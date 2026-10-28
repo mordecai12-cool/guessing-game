@@ -104,6 +104,18 @@
                 <p>🔴 Hard: {{ scores["hard"] }} points</p>
             </div>
 
+            <div class="statistics">
+                <h3>📊 Your Statistics</h3>
+
+                <p>🎮 Games Played: {{ stats["games"] }}</p>
+
+                <p>🏆 Wins: {{ stats["wins"] }}</p>
+
+                <p>😓 Losses: {{ stats["losses"] }}</p>
+
+                <p>📈 Win Rate: {{ "%.1f"|format(win_rate) }}%</p>
+            </div>
+
         {% endif %}
 
 

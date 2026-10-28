@@ -15,17 +15,35 @@ difficulty_settings = {
 
 @app.route("/")
 def home():
+    scores = session.get("scores", {
+        "easy": 0,
+        "medium": 0,
+        "hard": 0
+    })
+
+    stats = session.get("stats", {
+        "games": 0,
+        "wins": 0,
+        "losses": 0
+    })
+
+    games = stats["games"]
+    wins = stats["wins"]
+
+    if games > 0:
+        win_rate = (wins / games) * 100
+    else:
+        win_rate = 0
+
     return render_template(
         "index.html",
         message="",
         message_type="",
         tries=session.get("tries", 0),
         max_number=session.get("max_number", 10),
-        scores=session.get("scores", {
-            "easy": 0,
-            "medium": 0,
-            "hard": 0
-        })
+        scores=scores,
+        stats=stats,
+        win_rate=win_rate
     )
 
 
@@ -45,6 +63,16 @@ def start_game():
             "medium": 0,
             "hard": 0
         }
+
+    if "stats" not in session:
+        session["stats"] = {
+            "games": 0,
+            "wins": 0,
+            "losses": 0
+        }
+
+    session["stats"]["games"] += 1
+    session.modified = True
 
     session["secret"] = random.randint(1, settings["max_number"])
     session["tries"] = 0
@@ -80,7 +108,13 @@ def guess():
                 "easy": 0,
                 "medium": 0,
                 "hard": 0
-            })
+            }),
+            stats=session.get("stats", {
+                "games": 0,
+                "wins": 0,
+                "losses": 0
+            }),
+            win_rate=0
         )
 
     session["tries"] += 1
@@ -110,6 +144,7 @@ def guess():
             score = 1
 
         session["scores"][difficulty] += score
+        session["stats"]["wins"] += 1
 
         session.modified = True
 
@@ -124,17 +159,27 @@ def guess():
     elif session["tries"] >= max_tries:
         message = f"You lost! 😓 The number was {session['secret']}"
         message_type = "lose"
+
+        session["stats"]["losses"] += 1
+        session.modified = True
+
         session["game_over"] = True
 
     elif player_guess > session["secret"]:
         message = "Too high! 🤔"
-        message_type = "high"
 
     elif player_guess < session["secret"]:
         message = "Too low! 🤔"
-        message_type = "low"
 
     print("Result:", message)
+
+    games = session["stats"]["games"]
+    wins = session["stats"]["wins"]
+
+    if games > 0:
+        win_rate = (wins / games) * 100
+    else:
+        win_rate = 0
 
     return render_template(
         "index.html",
@@ -146,8 +191,11 @@ def guess():
             "easy": 0,
             "medium": 0,
             "hard": 0
-        })
+        }),
+        stats=session["stats"],
+        win_rate=win_rate
     )
+
 
 @app.route("/reset")
 def reset():
@@ -160,6 +208,7 @@ def reset():
     session["game_over"] = False
 
     return redirect("/")
+
 
 if __name__ == "__main__":
     app.run(debug=True)
