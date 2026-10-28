@@ -20,7 +20,12 @@ def home():
         message="",
         message_type="",
         tries=session.get("tries", 0),
-        max_number=session.get("max_number", 10)
+        max_number=session.get("max_number", 10),
+        scores=session.get("scores", {
+            "easy": 0,
+            "medium": 0,
+            "hard": 0
+        })
     )
 
 
@@ -33,6 +38,13 @@ def start_game():
     session["difficulty"] = difficulty
     session["max_number"] = settings["max_number"]
     session["max_tries"] = settings["max_tries"]
+
+    if "scores" not in session:
+        session["scores"] = {
+            "easy": 0,
+            "medium": 0,
+            "hard": 0
+        }
 
     session["secret"] = random.randint(1, settings["max_number"])
     session["tries"] = 0
@@ -63,7 +75,12 @@ def guess():
             message=message,
             message_type=message_type,
             tries=session["tries"],
-            max_number=max_number
+            max_number=max_number,
+            scores=session.get("scores", {
+                "easy": 0,
+                "medium": 0,
+                "hard": 0
+            })
         )
 
     session["tries"] += 1
@@ -76,7 +93,31 @@ def guess():
         message = "Out of range! 😞"
 
     elif player_guess == session["secret"]:
-        message = f"You got it! 🎉🔥 in {session['tries']} tries"
+
+        base_scores = {
+            "easy": 10,
+            "medium": 20,
+            "hard": 30
+        }
+
+        difficulty = session["difficulty"]
+
+        base_score = base_scores[difficulty]
+
+        score = base_score - ((session["tries"] - 1) * 2)
+
+        if score < 1:
+            score = 1
+
+        session["scores"][difficulty] += score
+
+        session.modified = True
+
+        message = (
+            f"You got it! 🎉🔥 in {session['tries']} tries "
+            f"(+{score} points)"
+        )
+
         message_type = "win"
         session["game_over"] = True
 
@@ -100,7 +141,12 @@ def guess():
         message=message,
         message_type=message_type,
         tries=session["tries"],
-        max_number=max_number
+        max_number=max_number,
+        scores=session.get("scores", {
+            "easy": 0,
+            "medium": 0,
+            "hard": 0
+        })
     )
 
 @app.route("/reset")

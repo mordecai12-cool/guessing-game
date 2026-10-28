@@ -159,3 +159,27 @@ button:hover {
     font-size: 14px;
     font-weight: bold;
 }
+
+.score {
+    margin-top: 10px;
+    color: #16a34a;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.scores {
+    margin-top: 20px;
+    padding: 15px;
+    border-radius: 10px;
+    background: #f1f5f9;
+}
+
+.scores h3 {
+    margin-bottom: 10px;
+    color: #1e3a8a;
+}
+
+.scores p {
+    margin: 5px 0;
+    font-weight: bold;
+}

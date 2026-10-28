@@ -94,6 +94,16 @@
                 Tries: {{ tries }}/{{ session.get("max_tries") }}
             </p>
 
+            <div class="scores">
+                <h3>🏆 Scores</h3>
+
+                <p>🟢 Easy: {{ scores["easy"] }} points</p>
+
+                <p>🟡 Medium: {{ scores["medium"] }} points</p>
+
+                <p>🔴 Hard: {{ scores["hard"] }} points</p>
+            </div>
+
         {% endif %}
 
 
