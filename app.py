@@ -71,7 +71,6 @@ def start_game():
             "losses": 0
         }
 
-    session["stats"]["games"] += 1
     session.modified = True
 
     session["secret"] = random.randint(1, settings["max_number"])
@@ -98,6 +97,14 @@ def guess():
         message = "Please enter a valid number."
         message_type = "high"
 
+        games = session["stats"]["games"]
+        wins = session["stats"]["wins"]
+
+        if games > 0:
+            win_rate = (wins / games) * 100
+        else:
+            win_rate = 0
+
         return render_template(
             "index.html",
             message=message,
@@ -114,7 +121,7 @@ def guess():
                 "wins": 0,
                 "losses": 0
             }),
-            win_rate=0
+            win_rate=win_rate
         )
 
     session["tries"] += 1
@@ -144,6 +151,11 @@ def guess():
             score = 1
 
         session["scores"][difficulty] += score
+
+        # Game is completed, so increase games
+        session["stats"]["games"] += 1
+
+        # Player won
         session["stats"]["wins"] += 1
 
         session.modified = True
@@ -157,10 +169,16 @@ def guess():
         session["game_over"] = True
 
     elif session["tries"] >= max_tries:
+
         message = f"You lost! 😓 The number was {session['secret']}"
         message_type = "lose"
 
+        # Game is completed, so increase games
+        session["stats"]["games"] += 1
+
+        # Player lost
         session["stats"]["losses"] += 1
+
         session.modified = True
 
         session["game_over"] = True
@@ -203,6 +221,7 @@ def reset():
 
     settings = difficulty_settings[difficulty]
 
+    # Start a new game, but don't change statistics yet
     session["secret"] = random.randint(1, settings["max_number"])
     session["tries"] = 0
     session["game_over"] = False
