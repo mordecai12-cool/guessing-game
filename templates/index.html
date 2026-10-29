@@ -116,6 +116,27 @@
                 <p>📈 Win Rate: {{ "%.1f"|format(win_rate) }}%</p>
             </div>
 
+            <div class="history">
+                <h3>📜 Game History</h3>
+
+                {% if history %}
+                    {% for game in history %}
+                        <p>
+                            {{ game["difficulty"]|capitalize }}
+                            — {{ game["result"] }}
+                            — {{ game["tries"] }} tries
+                            — +{{ game["points"] }} points
+                        </p>
+                    {% endfor %}
+                {% else %}
+                    <p>No games played yet.</p>
+                {% endif %}
+
+                <a href="{{ url_for('clear_history') }}" class="clear-history">
+                    🗑️ Clear History
+                </a>
+            </div>
+
         {% endif %}
 
 

@@ -71,6 +71,9 @@ def start_game():
             "losses": 0
         }
 
+    if "history" not in session:
+        session["history"] = []
+
     session.modified = True
 
     session["secret"] = random.randint(1, settings["max_number"])
@@ -154,9 +157,14 @@ def guess():
 
         # Game is completed, so increase games
         session["stats"]["games"] += 1
-
-        # Player won
         session["stats"]["wins"] += 1
+
+        session["history"].append({
+            "difficulty": difficulty,
+            "result": "Won",
+            "tries": session["tries"],
+            "points": score
+        })
 
         session.modified = True
 
@@ -175,9 +183,14 @@ def guess():
 
         # Game is completed, so increase games
         session["stats"]["games"] += 1
-
-        # Player lost
         session["stats"]["losses"] += 1
+
+        session["history"].append({
+            "difficulty": session["difficulty"],
+            "result": "Lost",
+            "tries": session["tries"],
+            "points": 0
+        })
 
         session.modified = True
 
@@ -211,7 +224,8 @@ def guess():
             "hard": 0
         }),
         stats=session["stats"],
-        win_rate=win_rate
+        win_rate=win_rate,
+        history=session.get("history", [])
     )
 
 
@@ -228,6 +242,12 @@ def reset():
 
     return redirect("/")
 
+@app.route("/clear-history")
+def clear_history():
+    session["history"] = []
+    session.modified = True
+
+    return redirect("/")
 
 if __name__ == "__main__":
     app.run(debug=True)
