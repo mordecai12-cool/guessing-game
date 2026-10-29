@@ -27,6 +27,8 @@ def home():
         "losses": 0
     })
 
+    history = session.get("history", [])
+
     games = stats["games"]
     wins = stats["wins"]
 
@@ -43,7 +45,8 @@ def home():
         max_number=session.get("max_number", 10),
         scores=scores,
         stats=stats,
-        win_rate=win_rate
+        win_rate=win_rate,
+        history=history
     )
 
 
@@ -52,6 +55,11 @@ def start_game():
     difficulty = request.form.get("difficulty", "easy")
 
     settings = difficulty_settings[difficulty]
+
+    player_name = request.form.get("player_name", "").strip()
+
+    if player_name:
+        session["player_name"] = player_name
 
     session["difficulty"] = difficulty
     session["max_number"] = settings["max_number"]
@@ -169,7 +177,8 @@ def guess():
         session.modified = True
 
         message = (
-            f"You got it! 🎉🔥 in {session['tries']} tries "
+            f"Congratulations, {session['player_name']}! 🎉🔥 "
+            f"You got it in {session['tries']} tries "
             f"(+{score} points)"
         )
 
@@ -178,7 +187,10 @@ def guess():
 
     elif session["tries"] >= max_tries:
 
-        message = f"You lost! 😓 The number was {session['secret']}"
+        message = (
+            f"Sorry, {session['player_name']}! 😓 "
+            f"You lost. The number was {session['secret']}"
+        )
         message_type = "lose"
 
         # Game is completed, so increase games

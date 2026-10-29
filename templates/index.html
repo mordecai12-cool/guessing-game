@@ -15,6 +15,12 @@
 
         <h1>🎯 Guess The Number</h1>
 
+        {% if session.get("player_name") %}
+            <p class="player-name">
+                👋 Welcome, {{ session["player_name"] }}!
+            </p>
+        {% endif %}
+
         <div class="game-status">
             {% if session.get("game_over") %}
                 🏆 Game Over
@@ -31,6 +37,17 @@
         {% if not session.get("secret") or session.get("game_over") %}
 
             <form method="POST" action="{{ url_for('start_game') }}">
+
+                {% if not session.get("player_name") %}
+                    <label for="player_name">Enter your name:</label>
+                    <input
+                        type="text"
+                        name="player_name"
+                        id="player_name"
+                        placeholder="Your name"
+                        required
+                    >
+                {% endif %}
 
                 <label for="difficulty">Choose difficulty:</label>
 
