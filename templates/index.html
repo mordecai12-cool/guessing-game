@@ -13,22 +13,42 @@
 
     <div class="game-container">
 
-        <h1>🎯 Guess The Number</h1>
+        <!-- Header -->
 
-        {% if session.get("player_name") %}
-            <p class="player-name">
-                👋 Welcome, {{ session["player_name"] }}!
-            </p>
-        {% endif %}
+        <div class="game-header">
+
+            <h1>🎯 Guess The Number</h1>
+
+            {% if session.get("player_name") %}
+                <p class="player-name">
+                    👋 Welcome, {{ session["player_name"] }}!
+                </p>
+            {% endif %}
+
+        </div>
+
+
+        <!-- Game Status -->
 
         <div class="game-status">
+
             {% if session.get("game_over") %}
-                🏆 Game Over
+
+                <span class="status-icon">🏆</span>
+                <span>Game Over</span>
+
             {% elif session.get("secret") %}
-                🎮 Game in progress
+                
+                <span class="status-icon">🎮</span>
+                <span>Game in progress</span>
+
             {% else %}
-                🎮 Choose your difficulty
+
+                <span class="status-icon">🎯</span>
+                <span>Choose your difficulty</span>
+
             {% endif %}
+
         </div>
 
 
@@ -36,134 +56,297 @@
 
         {% if not session.get("secret") or session.get("game_over") %}
 
-            <form method="POST" action="{{ url_for('start_game') }}">
+            <div class="game-section">
 
-                {% if not session.get("player_name") %}
-                    <label for="player_name">Enter your name:</label>
-                    <input
-                        type="text"
-                        name="player_name"
-                        id="player_name"
-                        placeholder="Your name"
-                        required
-                    >
-                {% endif %}
+                <h2>🎮 Start a New Game</h2>
 
-                <label for="difficulty">Choose difficulty:</label>
+                <form method="POST" action="{{ url_for('start_game') }}">
 
-                <select name="difficulty" id="difficulty">
+                    {% if not session.get("player_name") %}
 
-                    <option value="easy" {% if session.get("difficulty") == "easy" %}selected{% endif %}>
-                        Easy
-                    </option>
+                        <label for="player_name">
+                            Enter your name:
+                        </label>
 
-                    <option value="medium" {% if session.get("difficulty") == "medium" %}selected{% endif %}>
-                        Medium
-                    </option>
+                        <input
+                            type="text"
+                            name="player_name"
+                            id="player_name"
+                            placeholder="Your name"
+                            required
+                        >
 
-                    <option value="hard" {% if session.get("difficulty") == "hard" %}selected{% endif %}>
-                        Hard
-                    </option>
+                    {% endif %}
 
-                </select>
 
-                <button type="submit">Start Game 🎮</button>
+                    <label for="difficulty">
+                        Choose difficulty:
+                    </label>
 
-            </form>
+                    <select name="difficulty" id="difficulty">
+
+                        <option value="easy"
+                            {% if session.get("difficulty") == "easy" %}selected{% endif %}>
+                            Easy
+                        </option>
+
+                        <option value="medium"
+                            {% if session.get("difficulty") == "medium" %}selected{% endif %}>
+                            Medium
+                        </option>
+
+                        <option value="hard"
+                            {% if session.get("difficulty") == "hard" %}selected{% endif %}>
+                            Hard
+                        </option>
+
+                    </select>
+
+                    <button type="submit">
+                        Start Game 🎮
+                    </button>
+
+                </form>
+
+            </div>
 
         {% endif %}
 
 
-        <!-- Guess -->
+        <!-- Guess Area -->
 
         {% if session.get("secret") and not session.get("game_over") %}
 
-            <p>
-                Guess a number between 1 and {{ max_number }}
-            </p>
+            <div class="game-section">
 
-            <form method="POST" action="{{ url_for('guess') }}">
+                <h2>🔢 Make Your Guess</h2>
 
-                <input
-                    type="number"
-                    name="guess"
-                    min="1"
-                    max="{{ max_number }}"
-                    placeholder="Enter your guess"
-                    required
-                >
+                <p>
+                    Guess a number between
+                    <strong>1</strong> and
+                    <strong>{{ max_number }}</strong>
+                </p>
 
-                <button type="submit">Guess</button>
+                <form method="POST" action="{{ url_for('guess') }}">
 
-            </form>
+                    <input
+                        type="number"
+                        name="guess"
+                        min="1"
+                        max="{{ max_number }}"
+                        placeholder="Enter your guess"
+                        required
+                    >
+
+                    <button type="submit">
+                        Guess 🎯
+                    </button>
+
+                </form>
+
+            </div>
 
         {% endif %}
 
 
-        <div class="message {{ message_type }}">
-            {{ message }}
-        </div>
+        <!-- Message -->
 
+        {% if message %}
+
+            <div class="message {{ message_type }}">
+                {{ message }}
+            </div>
+
+        {% endif %}
+
+
+        <!-- Current Game Information -->
 
         {% if session.get("secret") %}
 
-            <p class="tries">
-                Tries: {{ tries }}/{{ session.get("max_tries") }}
-            </p>
+            <div class="game-info">
 
-            <div class="scores">
-                <h3>🏆 Scores</h3>
+                <p class="tries">
+                    🎯 Tries:
+                    <strong>{{ tries }}/{{ session.get("max_tries") }}</strong>
+                </p>
 
-                <p>🟢 Easy: {{ scores["easy"] }} points</p>
 
-                <p>🟡 Medium: {{ scores["medium"] }} points</p>
+                <!-- Scores -->
 
-                <p>🔴 Hard: {{ scores["hard"] }} points</p>
-            </div>
+                <div class="scores">
 
-            <div class="statistics">
-                <h3>📊 Your Statistics</h3>
+                    <h3>🏆 Scores</h3>
 
-                <p>🎮 Games Played: {{ stats["games"] }}</p>
+                    <div class="score-cards">
 
-                <p>🏆 Wins: {{ stats["wins"] }}</p>
+                        <div class="score-card easy">
 
-                <p>😓 Losses: {{ stats["losses"] }}</p>
+                            <span>🟢</span>
 
-                <p>📈 Win Rate: {{ "%.1f"|format(win_rate) }}%</p>
-            </div>
+                            <h4>Easy</h4>
 
-            <div class="history">
-                <h3>📜 Game History</h3>
+                            <strong>
+                                {{ scores["easy"] }}
+                            </strong>
 
-                {% if history %}
-                    {% for game in history %}
-                        <p>
-                            {{ game["difficulty"]|capitalize }}
-                            — {{ game["result"] }}
-                            — {{ game["tries"] }} tries
-                            — +{{ game["points"] }} points
-                        </p>
-                    {% endfor %}
-                {% else %}
-                    <p>No games played yet.</p>
-                {% endif %}
+                            <small>points</small>
 
-                <a href="{{ url_for('clear_history') }}" 
-                    class="clear-history"
-                    onclick="return confirm('Are you sure you want to clear your game history?');">
-                    🗑️ Clear History
-                </a>
+                        </div>
+
+
+                        <div class="score-card medium">
+
+                            <span>🟡</span>
+
+                            <h4>Medium</h4>
+
+                            <strong>
+                                {{ scores["medium"] }}
+                            </strong>
+
+                            <small>points</small>
+
+                        </div>
+
+
+                        <div class="score-card hard">
+
+                            <span>🔴</span>
+
+                            <h4>Hard</h4>
+
+                            <strong>
+                                {{ scores["hard"] }}
+                            </strong>
+
+                            <small>points</small>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Statistics -->
+
+                <div class="statistics">
+
+                    <h3>📊 Your Statistics</h3>
+
+                    <div class="stat-cards">
+
+                        <div class="stat-card">
+                            <span>🎮</span>
+                            <h4>Games</h4>
+                            <strong>{{ stats["games"] }}</strong>
+                        </div>
+
+                         <div class="stat-card">
+                            <span>🏆</span>
+                            <h4>Wins</h4>
+                            <strong>{{ stats["wins"] }}</strong>
+                         </div>
+
+                         <div class="stat-card">
+                            <span>😓</span>
+                            <h4>Losses</h4>
+                            <strong>{{ stats["losses"] }}</strong>
+                         </div>
+
+                         <div class="stat-card">
+                            <span>📈</span>
+                            <h4>Win Rate</h4>
+                            <strong>{{ "%.1f"|format(win_rate) }}%</strong>
+                         </div>
+                    </div>
+
+                </div>
+
+
+                <!-- Game History -->
+
+                <div class="history">
+
+                    <h3>📜 Game History</h3>
+
+                    {% if history %}
+
+                        <div class="history-list">
+
+                            {% for game in history %}
+
+                                <div class="history-item">
+
+                                    <div class="history-main">
+
+                                        <strong>
+                                            {{ game["difficulty"]|capitalize }}
+                                        </strong>
+
+                                        {% if game["result"] == "Won" %}
+                                            <span class="history-result won">
+                                                🎉 Won
+                                            </span>
+                                        {% else %}
+                                            <span class="history-result lost">
+                                                😓 Lost
+                                            </span>
+                                        {% endif %}
+                                    </div>
+
+                                    <div class="history-details">
+
+                                        <span>
+                                            🎯 {{ game["tries"] }} tries
+                                        </span>
+
+                                        <span>
+                                            🏆 +{{ game["points"] }} points
+                                        </span>
+
+                                    </div>
+
+                                </div>
+
+                            {% endfor %}
+
+                        </div>
+
+                    {% else %}
+
+                        <p>No games played yet.</p>
+
+                    {% endif %}
+
+
+                    <a
+                        href="{{ url_for('clear_history') }}"
+                        class="clear-history"
+                        onclick="return confirm('Are you sure you want to clear your game history?');"
+                    >
+                        🗑️ Clear History
+                    </a>
+
+                </div>
+
             </div>
 
         {% endif %}
 
 
+        <!-- Play Again -->
+
         {% if session.get("game_over") %}
 
-            <a href="{{ url_for('reset') }}" class="play-again">
-                Play Again 🔄
-            </a>
+            <div class="play-again-section">
+
+                <a href="{{ url_for('reset') }}" class="play-again">
+                    Play Again 🔄
+                </a>
+
+            </div>
 
         {% endif %}
 
