@@ -523,3 +523,72 @@ button:hover {
 .status-icon {
     font-size: 20px;
 }
+
+/* Best scores */
+
+.best-scores {
+    margin-top: 20px;
+
+    padding: 15px;
+
+    border-radius: 10px;
+
+    background: #f8fafc;
+}
+
+.best-scores h3 {
+    margin-bottom: 10px;
+
+    color: #1e3a8a;
+}
+
+.best-score-cards {
+    display: flex;
+
+    gap: 10px;
+
+    margin-top: 15px;
+}
+
+.best-score-card {
+    flex: 1;
+
+    padding: 15px 10px;
+
+    border-radius: 10px;
+
+    background: white;
+
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+}
+
+.best-score-card span {
+    font-size: 20px;
+}
+
+.best-score-card h4 {
+    margin: 6px 0;
+}
+
+.best-score-card strong {
+    display: block;
+
+    font-size: 24px;
+
+    color: #1e3a8a;
+}
+
+.best-score-card small {
+    color: #64748b;
+}
+
+
+/* Mobile best scores */
+
+@media (max-width: 600px) {
+
+    .best-score-cards {
+        flex-direction: column;
+    }
+
+}

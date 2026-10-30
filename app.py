@@ -21,6 +21,12 @@ def home():
         "hard": 0
     })
 
+    best_scores = session.get("best_scores", {
+        "easy": 0,
+        "medium": 0,
+        "hard": 0
+    })
+
     stats = session.get("stats", {
         "games": 0,
         "wins": 0,
@@ -44,6 +50,7 @@ def home():
         tries=session.get("tries", 0),
         max_number=session.get("max_number", 10),
         scores=scores,
+        best_scores=best_scores,
         stats=stats,
         win_rate=win_rate,
         history=history
@@ -67,6 +74,13 @@ def start_game():
 
     if "scores" not in session:
         session["scores"] = {
+            "easy": 0,
+            "medium": 0,
+            "hard": 0
+        }
+
+    if "best_scores" not in session:
+        session["best_scores"] = {
             "easy": 0,
             "medium": 0,
             "hard": 0
@@ -127,12 +141,18 @@ def guess():
                 "medium": 0,
                 "hard": 0
             }),
+            best_scores=session.get("best_scores", {
+                "easy": 0,
+                "medium": 0,
+                "hard": 0
+            }),
             stats=session.get("stats", {
                 "games": 0,
                 "wins": 0,
                 "losses": 0
             }),
-            win_rate=win_rate
+            win_rate=win_rate,
+            history=session.get("history", [])
         )
 
     session["tries"] += 1
@@ -163,6 +183,9 @@ def guess():
 
         session["scores"][difficulty] += score
 
+        if score > session["best_scores"][difficulty]:
+            session["best_scores"][difficulty] = score
+
         # Game is completed, so increase games
         session["stats"]["games"] += 1
         session["stats"]["wins"] += 1
@@ -191,6 +214,7 @@ def guess():
             f"Sorry, {session['player_name']}! 😓 "
             f"You lost. The number was {session['secret']}"
         )
+
         message_type = "lose"
 
         # Game is completed, so increase games
@@ -235,6 +259,11 @@ def guess():
             "medium": 0,
             "hard": 0
         }),
+        best_scores=session.get("best_scores", {
+            "easy": 0,
+            "medium": 0,
+            "hard": 0
+        }),
         stats=session["stats"],
         win_rate=win_rate,
         history=session.get("history", [])
@@ -254,12 +283,14 @@ def reset():
 
     return redirect("/")
 
+
 @app.route("/clear-history")
 def clear_history():
     session["history"] = []
     session.modified = True
 
     return redirect("/")
+
 
 if __name__ == "__main__":
     app.run(debug=True)

@@ -38,7 +38,7 @@
                 <span>Game Over</span>
 
             {% elif session.get("secret") %}
-                
+
                 <span class="status-icon">🎮</span>
                 <span>Game in progress</span>
 
@@ -229,6 +229,63 @@
                 </div>
 
 
+                <!-- Best Scores -->
+
+                <div class="best-scores">
+
+                    <h3>🏅 Best Scores</h3>
+
+                    <div class="best-score-cards">
+
+                        <div class="best-score-card">
+
+                            <span>🟢</span>
+
+                            <h4>Easy</h4>
+
+                            <strong>
+                                {{ best_scores["easy"] }}
+                            </strong>
+
+                            <small>best points</small>
+
+                        </div>
+
+
+                        <div class="best-score-card">
+
+                            <span>🟡</span>
+
+                            <h4>Medium</h4>
+
+                            <strong>
+                                {{ best_scores["medium"] }}
+                            </strong>
+
+                            <small>best points</small>
+
+                        </div>
+
+
+                        <div class="best-score-card">
+
+                            <span>🔴</span>
+
+                            <h4>Hard</h4>
+
+                            <strong>
+                                {{ best_scores["hard"] }}
+                            </strong>
+
+                            <small>best points</small>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
                 <!-- Statistics -->
 
                 <div class="statistics">
@@ -243,23 +300,24 @@
                             <strong>{{ stats["games"] }}</strong>
                         </div>
 
-                         <div class="stat-card">
+                        <div class="stat-card">
                             <span>🏆</span>
                             <h4>Wins</h4>
                             <strong>{{ stats["wins"] }}</strong>
-                         </div>
+                        </div>
 
-                         <div class="stat-card">
+                        <div class="stat-card">
                             <span>😓</span>
                             <h4>Losses</h4>
                             <strong>{{ stats["losses"] }}</strong>
-                         </div>
+                        </div>
 
-                         <div class="stat-card">
+                        <div class="stat-card">
                             <span>📈</span>
                             <h4>Win Rate</h4>
                             <strong>{{ "%.1f"|format(win_rate) }}%</strong>
-                         </div>
+                        </div>
+
                     </div>
 
                 </div>
@@ -286,15 +344,21 @@
                                         </strong>
 
                                         {% if game["result"] == "Won" %}
+
                                             <span class="history-result won">
                                                 🎉 Won
                                             </span>
+
                                         {% else %}
+
                                             <span class="history-result lost">
                                                 😓 Lost
                                             </span>
+
                                         {% endif %}
+
                                     </div>
+
 
                                     <div class="history-details">
 
