@@ -1,10 +1,13 @@
 from flask import Flask, render_template, request, session, redirect
+from dotenv import load_dotenv
+import os
 import random
 
 app = Flask(__name__)
 
-app.secret_key = "guessing-game-secret"
+load_dotenv()
 
+app.secret_key = os.getenv("SECRET_KEY")
 
 difficulty_settings = {
     "easy": {"max_number": 10, "max_tries": 5},
@@ -293,4 +296,4 @@ def clear_history():
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run()
